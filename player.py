@@ -1,26 +1,61 @@
-from math import sin, cos, pi
+from math import sin, cos, pi, sqrt
 
 class player:
     def __init__(self):
-        self.x = 1
-        self.y = 1
+        self.top_x = -40
+        self.top_y = -40
+        self.top_c = -30/sqrt((self.top_x*self.top_x)+(self.top_y*self.top_y))
+        self.left_x = -40
+        self.left_y = -40
+        self.left_c = 0
+        self.right_x = -40
+        self.right_y = -40
+        self.right_c = 0
+        self.top_rot = 0
+        self.left_rot = 50
+        self.right_rot = -10
         self.gun = 0
         self.lives = 10
         self.rotation_D = 2
         self.deg_rotation = 0
+        self.left_deg_rotation = 0
+        self.right_deg_rotation = 0
         self.rotation = self.rotation_D * (pi/180)
-    def rotate_left(self):
+        self.left_rotate(self.left_rot * (pi/180))
+        self.right_rotate(self.right_rot * (pi/180))
+
+    def all_rotate_left(self):
         self.rotate(-self.rotation)
 
-    def rotate_right(self):
+    def all_rotate_right(self):
         self.rotate(self.rotation)
 
-    def rotate(self, rads):
+    def left_rotate(self, rads):
         cosin = cos(rads)
         sinus = sin(rads)
-        self.deg_rotation += (rads / (pi/180))
-        self.x = cosin*self.x - sinus*self.y
-        self.y = sinus*self.x + cosin*self.y
+        self.left_x = cosin*self.left_x - sinus*self.left_y
+        self.left_y = sinus*self.left_x + cosin*self.left_y
+        self.left_c = 20/sqrt((self.left_x*self.left_x)+(self.left_y*self.left_y))
+
+    def right_rotate(self, rads):
+        cosin = cos(rads)
+        sinus = sin(rads)
+        self.right_x = cosin*self.right_x - sinus*self.right_y
+        self.right_y = sinus*self.right_x + cosin*self.right_y
+        self.right_c = 20/sqrt((self.right_x*self.right_x)+(self.right_y*self.right_y))
+    
+    def top_rotate(self, rads):
+        cosin = cos(rads)
+        sinus = sin(rads)
+        self.top_x = cosin*self.top_x - sinus*self.top_y
+        self.top_y = sinus*self.top_x + cosin*self.top_y
+        self.top_c = -30/sqrt((self.top_x*self.top_x)+(self.top_y*self.top_y))
+
+    def rotate(self, rads):
+        self.left_rotate(rads)
+        self.right_rotate(rads)
+        self.top_rotate(rads)
+
     def get_deg_rotation(self):
         return self.deg_rotation 
     def get_x(self):
