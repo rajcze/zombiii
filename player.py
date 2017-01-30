@@ -2,7 +2,8 @@ from math import sin, cos, pi, sqrt
 import bullets
 
 class player:
-    def __init__(self):
+    def __init__(self, game):
+        self.game = game
         self.top_x = -40
         self.top_y = -40
         self.top_c = -30/sqrt((self.top_x*self.top_x)+(self.top_y*self.top_y))
@@ -25,6 +26,7 @@ class player:
         self.left_rotate(self.left_rot * (pi/180))
         self.right_rotate(self.right_rot * (pi/180))
         self.bullets = []
+        self.color = (50,200,0)
 
     def shoot(self, x, y):
         self.bul_c = 10/sqrt((self.top_x*self.top_x)+(self.top_y*self.top_y))
@@ -33,16 +35,18 @@ class player:
     def check_enemy_hit(self, enemy):
         bullets_to_remove = []
         for idx, b in enumerate(self.bullets):
-          if b.x > enemy.x and b.x < enemy.x + enemy.width:
-            if b.y > enemy.y and b.y < enemy.y + enemy.height:
-                enemy.registerHit()
-                enemy.append(idx)
-
-        for usedBullet in bulletsToRemove:
+            if b.x > self.game.screen_x+100  or b.x < -100 or b.y > self.game.screen_y +100 or b.y < -100:
+                bullets_to_remove.append(idx)
+            if b.x > enemy.x and b.x < enemy.x + enemy.width:
+                if b.y > enemy.y and b.y < enemy.y + enemy.height:
+                    #enemy.registerHit()
+                    bullets_to_remove.append(idx)
+        for usedBullet in bullets_to_remove:
           del self.bullets[usedBullet]
 
-        if enemy.health <= 0:
-          return True
+        #if enemy.health <= 0:
+          #return True
+        return True
 
     def all_rotate_left(self):
         self.rotate(-self.rotation)
