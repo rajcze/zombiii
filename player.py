@@ -1,4 +1,5 @@
 from math import sin, cos, pi, sqrt
+import bullets
 
 class player:
     def __init__(self):
@@ -23,6 +24,25 @@ class player:
         self.rotation = self.rotation_D * (pi/180)
         self.left_rotate(self.left_rot * (pi/180))
         self.right_rotate(self.right_rot * (pi/180))
+        self.bullets = []
+
+    def shoot(self, x, y):
+        self.bul_c = 10/sqrt((self.top_x*self.top_x)+(self.top_y*self.top_y))
+        self.bullets.append(bullets.Bullet(-(self.top_x*self.bul_c), -(self.top_y*self.bul_c), x+(self.top_x*self.top_c), y+(self.top_y*self.top_c)))
+
+    def check_enemy_hit(self, enemy):
+        bullets_to_remove = []
+        for idx, b in enumerate(self.bullets):
+          if b.x > enemy.x and b.x < enemy.x + enemy.width:
+            if b.y > enemy.y and b.y < enemy.y + enemy.height:
+                enemy.registerHit()
+                enemy.append(idx)
+
+        for usedBullet in bulletsToRemove:
+          del self.bullets[usedBullet]
+
+        if enemy.health <= 0:
+          return True
 
     def all_rotate_left(self):
         self.rotate(-self.rotation)
