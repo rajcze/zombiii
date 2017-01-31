@@ -20,7 +20,7 @@ def draw_bullet(bullet, X, Y):
     pygame.draw.line(window, bullet.color, (bullet.x, bullet.y), (X + bullet.x_end, Y + bullet.y_end), 2)
 
 def draw_enemy(enemy):
-    pygame.draw.circle(window, enemy.color, (enemy.x, enemy.y), 20 ,1)
+    pygame.draw.circle(window, enemy.color, (math.ceil(enemy.x), math.ceil(enemy.y)), 20 ,1)
 
 if __name__ == "__main__":
     game = game.game()
@@ -31,7 +31,7 @@ if __name__ == "__main__":
     player.rotate((45+180)*(math.pi/180))
     enemies = []
     level = 1
-    intervals = [600]
+    intervals = [1000]
     difficulty = 80
     last_enemy_ctime = 0
     gameStarted = False
@@ -55,15 +55,18 @@ if __name__ == "__main__":
             bullet.move()
             draw_bullet(bullet, game.screen_x/2, game.screen_y/2)
 
-        for zombi in enemies:
+        for idx, zombi in enumerate(enemies):
             zombi.move()
+            zombi.check_player_reachable(50, player)
             draw_enemy(zombi)
-            player.check_enemy_hit(zombi)
+            if player.check_enemy_hit(zombi):
+                del enemies[idx]
+
 
         #pygame.draw.circle(window,(255,0,0),(800, 450), 30, 1)
 
         if (GAME_TIME.get_ticks() - last_enemy_ctime > intervals[level-1]) and (gameStarted is True):
-            enemies.append( enemy.enemy(game.screen_x, game.screen_y) )
+            enemies.append( enemy.enemy(game) )
             last_enemy_ctime= GAME_TIME.get_ticks()
         
         if left:
