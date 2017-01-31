@@ -19,6 +19,9 @@ def draw_player(player, X, Y):
 def draw_bullet(bullet, X, Y):
     pygame.draw.line(window, bullet.color, (bullet.x, bullet.y), (X + bullet.x_end, Y + bullet.y_end), 2)
 
+def draw_enemy(enemy):
+    pygame.draw.circle(window, enemy.color, (enemy.x, enemy.y), 20 ,1)
+
 if __name__ == "__main__":
     game = game.game()
     pygame.init()
@@ -28,39 +31,40 @@ if __name__ == "__main__":
     player.rotate((45+180)*(math.pi/180))
     enemies = []
     level = 1
-    intervals = [40]
+    intervals = [600]
     difficulty = 80
-    lastEnemyCreated = 0
+    last_enemy_ctime = 0
     gameStarted = False
+
     '''
     print(player.get_deg_rotation())
     print("X: ", player.get_x())
     print("Y: ", player.get_y())
     '''
-    dummy = enemy.enemy()
-
+   
     left = False
     right = False
     shoot = False
     while True:
+        gameStarted = True
 
-        '''
-        print(player.get_deg_rotation())
-        print("X: ", player.get_x())
-        print("Y: ", player.get_y())
-        '''
         window.fill((0,0,0))
         
         draw_player(player, game.screen_x/2, game.screen_y/2)
         for bullet in player.bullets:
             bullet.move()
             draw_bullet(bullet, game.screen_x/2, game.screen_y/2)
-        #pygame.draw.circle(window,(255,0,0),(800, 450), 30, 1)
-        player.check_enemy_hit(dummy)
 
-        if GAME_TIME.get_ticks() - lastEnemyCreated > intervals[level-1] and gameStarted is True:
-            enemyShips.append(ships.Enemy(random.randint(0, windowWidth), -60, pygame, surface, 1))
-            lastEnemyCreated = GAME_TIME.get_ticks()
+        for zombi in enemies:
+            zombi.move()
+            draw_enemy(zombi)
+            player.check_enemy_hit(zombi)
+
+        #pygame.draw.circle(window,(255,0,0),(800, 450), 30, 1)
+
+        if (GAME_TIME.get_ticks() - last_enemy_ctime > intervals[level-1]) and (gameStarted is True):
+            enemies.append( enemy.enemy(game.screen_x, game.screen_y) )
+            last_enemy_ctime= GAME_TIME.get_ticks()
         
         if left:
             player.all_rotate_left()
