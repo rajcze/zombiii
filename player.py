@@ -36,14 +36,13 @@ class player:
         bullets_to_remove = []
         death = False
         for idx, b in enumerate(self.bullets):
-            if b.x > self.game.screen_x+100  or b.x < -100 or b.y > self.game.screen_y +100 or b.y < -100:
-                bullets_to_remove.append(idx)
+            if b.x > self.game.screen_x+900  or b.x < -900 or b.y > self.game.screen_y +900 or b.y < -900:
+                del self.bullets[idx]
+                next
             elif b.x > enemy.x and b.x < enemy.x + enemy.width:
                 if b.y > enemy.y and b.y < enemy.y + enemy.height:
                     death = enemy.register_hit()
-                    bullets_to_remove.append(idx)
-        for usedBullet in bullets_to_remove:
-          del self.bullets[usedBullet]
+                    del self.bullets[idx]
 
         return death
 

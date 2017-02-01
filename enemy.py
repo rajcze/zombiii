@@ -28,7 +28,6 @@ class enemy:
 			self.deal_damage(player)
 
 	def random_pos(self):
-		
 		self.x =  randint(-600,self.game.screen_x + 600)
 		if self.x > self.game.screen_x+100 or self.x < -100:
 			self.y =randint(-300, self.game.screen_y + 300)
