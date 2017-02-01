@@ -7,6 +7,7 @@ import enemy
 import game
 import math
 from time import sleep
+import drawing
 
 def draw_player(player, X, Y):  
     #pygame.draw.line(window,(50,200,0),(X,Y),(X+(player.left_x*player.left_c),Y+(player.left_y*player.left_c)),1)
@@ -38,6 +39,19 @@ def update_game():
         if player.check_enemy_hit(zombi):
             del enemies[idx]
 
+def show_HUD(player, game):
+    #score
+    drawing.print_text(window, "ABCDEFGO", (10,10), 3, 30, (255,255,255))
+
+
+    # lives
+    space = 10
+    for live in range(player.lives):
+        pygame.draw.lines(window,(255,0,0), True, [(5+space+(30+space)*live,0+(game.screen_y-space-30)),((10+space)+(30+space)*live,0+(game.screen_y-space-30)),
+            ((15+space)+(30+space)*live,5+(game.screen_y-space-30)),((20+space)+(30+space)*live,0+(game.screen_y-space-30)),((25+space)+(30+space)*live,0+(game.screen_y-space-30)),
+            ((30+space)+(30+space)*live,5+(game.screen_y-space-30)),((30+space)+(30+space)*live,10+(game.screen_y-space-30)),((15+space)+(30+space)*live,25+(game.screen_y-space-30)),
+            ((0+space)+(30+space)*live,10+(game.screen_y-space-30)),((0+space)+(30+space)*live,5+(game.screen_y-space-30))], 3)
+
 def show_menu(name, items):
     pygame.draw.circle(window,(255,0,0),(800, 450), 30, 1)
     #pygame.draw.circle(window, (255,0,0), (game.screen_x/2, game.screen_y/2), 80, 1)
@@ -51,16 +65,16 @@ def pause_game(enemy_time,pause):
         for event in GAME_EVENTS.get():    
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_ESCAPE:
-                    pause = False
+                    pause = False;
                     enemy_time = (GAME_TIME.get_ticks() + time)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DOWN:
                     chosen +=1
-                    if chosen > len(menu)
+                    if chosen > len(menu):
                         chosen = 0
                 if event.key == pygame.K_UP:
                     chosen -= 1
-                    if chosen < 0
+                    if chosen < 0:
                         chosen = len(menu)
 
             if event.type == GAME_GLOBALS.QUIT:
@@ -127,5 +141,7 @@ if __name__ == "__main__":
                     right = False
 
         clock.tick(60)
+        
+        show_HUD(player, game)
 
         pygame.display.update()
