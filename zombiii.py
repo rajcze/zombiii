@@ -41,7 +41,7 @@ def update_game():
 
 def show_HUD(player, game):
     #score
-    drawing.print_text(window, "ABCDEFGO", (10,10), 3, 30, (255,255,255))
+    drawing.print_text(window, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", (10,10), 3, 30, (255,255,255))
 
 
     # lives
