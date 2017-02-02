@@ -16,16 +16,23 @@ class enemy:
 		self.correct = 1/sqrt((self.x_vec*self.x_vec)+(self.y_vec*self.y_vec))
 		self.speed_x = -self.x_vec*self.correct
 		self.speed_y = -self.y_vec*self.correct
+		self.kill_player = False
+		self.last_time_hit = 0
+		self.hit_limit = 1500
 
-	def deal_damage(self, player):
-		pass
+	def deal_damage(self, player, time):
+		if time-self.last_time_hit > self.hit_limit:
+			player.lives -= 1
+			self.last_time_hit = time
 
-	def check_player_reachable(self, player_circle, player):
+	def check_player_reachable(self, player_circle, player, time):
 		vector = (self.x - (self.game.screen_x/2),self.y - (self.game.screen_y/2))
 		if sqrt((vector[0]*vector[0])+(vector[1]*vector[1])) < (player_circle+4):
 			self.speed_x = 0
 			self.speed_y = 0
-			self.deal_damage(player)
+			if self.last_time_hit == 0:
+				self.last_time_hit = time 
+			self.kill_player = True
 
 	def random_pos(self):
 		self.x =  randint(-600,self.game.screen_x + 600)
@@ -37,9 +44,12 @@ class enemy:
 			else:
 				self.y = randint(-600, -100)
 
-	def move(self):
-		self.x += self.speed_x
-		self.y += self.speed_y
+	def move(self, player, time):
+		if not self.kill_player:
+			self.x += self.speed_x
+			self.y += self.speed_y
+		else:
+			self.deal_damage(player, time)
 
 	def register_hit(self):
 		self.health -= 1
@@ -48,6 +58,3 @@ class enemy:
 			return True
 		else:
 			return False
-
-	def die(self):
-		pass

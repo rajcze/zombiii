@@ -25,7 +25,7 @@ def draw_enemy(enemy):
 
 def update_game():
     window.fill((0,0,0))
-    
+    time = GAME_TIME.get_ticks()
     draw_player(player, game.screen_x/2, game.screen_y/2)
     
     for bullet in player.bullets:
@@ -33,24 +33,35 @@ def update_game():
         draw_bullet(bullet, game.screen_x/2, game.screen_y/2)
 
     for idx, zombi in enumerate(enemies):
-        zombi.move()
-        zombi.check_player_reachable(50, player)
+        zombi.move(player, time)
+        zombi.check_player_reachable(50, player, time)
         draw_enemy(zombi)
         if player.check_enemy_hit(zombi):
             del enemies[idx]
 
 def show_HUD(player, game):
     #score
-    drawing.print_text(window, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", (10,10), 3, 30, (255,255,255))
-
-
-    # lives
+    size = 30
+    color = (255,255,255)
+    thickness = 3
     space = 10
+    drawing.print_text(window, str(game.score), (space,space), thickness, size, color)
+    # lives
     for live in range(player.lives):
         pygame.draw.lines(window,(255,0,0), True, [(5+space+(30+space)*live,0+(game.screen_y-space-30)),((10+space)+(30+space)*live,0+(game.screen_y-space-30)),
             ((15+space)+(30+space)*live,5+(game.screen_y-space-30)),((20+space)+(30+space)*live,0+(game.screen_y-space-30)),((25+space)+(30+space)*live,0+(game.screen_y-space-30)),
             ((30+space)+(30+space)*live,5+(game.screen_y-space-30)),((30+space)+(30+space)*live,10+(game.screen_y-space-30)),((15+space)+(30+space)*live,25+(game.screen_y-space-30)),
-            ((0+space)+(30+space)*live,10+(game.screen_y-space-30)),((0+space)+(30+space)*live,5+(game.screen_y-space-30))], 3)
+            ((0+space)+(30+space)*live,10+(game.screen_y-space-30)),((0+space)+(30+space)*live,5+(game.screen_y-space-30))], thickness)
+    # developer
+    if(show_dev):
+        enemies_cnt = str(len(enemies))
+        bullets_cnt = str(len(player.bullets))
+        drawing.print_text(window, "ENEMIES: "+enemies_cnt, (game.screen_x - size*(15) + space,10), thickness, size, color)
+        drawing.print_text(window, "BULLETS: "+bullets_cnt, (game.screen_x - size*(15) + space,10+size+space), thickness, size, color)
+        drawing.print_text(window, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.!:?", (space,game.screen_y-(size+space)*3), thickness, size, color)
+        drawing.print_text(window, "LIVES: "+str(player.lives), (space,game.screen_y-(size+space)*2), thickness, size, color)
+
+
 
 def show_menu(name, items):
     pygame.draw.circle(window,(255,0,0),(800, 450), 30, 1)
@@ -102,7 +113,7 @@ if __name__ == "__main__":
     right = False
     shoot = False
     gameStarted = True
-
+    show_dev = False
     while True:
         
         update_game()
@@ -139,7 +150,14 @@ if __name__ == "__main__":
                     left = False
                 if event.key == pygame.K_RIGHT:
                     right = False
-
+                if event.key == pygame.K_F10:
+                    if show_dev:
+                        show_dev = False
+                    else:
+                        show_dev = True
+        if player.lives == 0:
+            #save score,etc 
+            break
         clock.tick(60)
         
         show_HUD(player, game)
