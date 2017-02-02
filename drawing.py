@@ -64,4 +64,4 @@ def print_text(window, text, position, thickness, size, color):
 		if letter in symbolstr:
 			print_symbol(window, letter, (position[0]+idx*(size+space),position[1]),thickness,size, color)
 		else:
-			print_letter(window, letter, (position[0]+idx*(size+space),position[1]),thickness,size, color)
+			print_letter(window, letter.upper(), (position[0]+idx*(size+space),position[1]),thickness,size, color)

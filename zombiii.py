@@ -63,37 +63,60 @@ def show_HUD(player, game):
 
 
 
-def show_menu(name, items):
-    pygame.draw.circle(window,(255,0,0),(800, 450), 30, 1)
-    #pygame.draw.circle(window, (255,0,0), (game.screen_x/2, game.screen_y/2), 80, 1)
+def show_menu(game, name, items, chosen):
+    space = 10
+    name_color = (0,255,0)
+    name_thickness = 8
+    name_size = 50
+    size = 30
+    color = (255,255,255)
+    chosen_color = (20,255,20)
+    chosen_thickness = 4
+    thickness = 3
+    drawing.print_text(window, name, ((game.screen_x-(len(name)*name_size))/2,((game.screen_y)/2-name_size-(len(items)*(size+space)-space))), name_thickness, name_size, name_color)
 
-def pause_game(enemy_time,pause):
+    for idx, item in enumerate(items):
+        if idx == chosen:
+            drawing.print_text(window, item, ((game.screen_x-(len(item)*size))/2,((game.screen_y)/2-name_size-(len(items)*(size+space))+space)+name_size+space*2+ (size+space)*idx), chosen_thickness, size, chosen_color)
+        else:
+            drawing.print_text(window, item, ((game.screen_x-(len(item)*size))/2,((game.screen_y)/2-name_size-(len(items)*(size+space))+space)+name_size+space*2+ (size+space)*idx), thickness, size, color)
+
+def menu_item(game, name):
+    pass
+
+
+def pause_game(game, enemy_time,pause):
     time = GAME_TIME.get_ticks() - enemy_time
+    chosen = 0
+    menu = ["return", "settings" , "score", "quit"]
     while pause:
         window.fill((0,0,0))
-        menu = ["return, settings, score, quit"]
-        show_menu("PAUSE", menu)
+       
+        show_menu(game, "PAUSE", menu, chosen)
+
         for event in GAME_EVENTS.get():    
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_ESCAPE:
                     pause = False;
                     enemy_time = (GAME_TIME.get_ticks() + time)
+                if event.key == pygame.K_RETURN:
+                    if menu_item(game, menu[chosen]):
+                        break
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DOWN:
                     chosen +=1
-                    if chosen > len(menu):
+                    if chosen >= len(menu):
                         chosen = 0
                 if event.key == pygame.K_UP:
                     chosen -= 1
                     if chosen < 0:
-                        chosen = len(menu)
+                        chosen = len(menu)-1
 
             if event.type == GAME_GLOBALS.QUIT:
                     pygame.quit()
                     sys.exit()
 
         clock.tick(60)
-
         pygame.display.update()
 
 if __name__ == "__main__":
@@ -117,7 +140,6 @@ if __name__ == "__main__":
     while True:
         
         update_game()
-        #pygame.draw.circle(window,(255,0,0),(800, 450), 30, 1)
 
         if (GAME_TIME.get_ticks() - last_enemy_ctime > intervals[level-1]) and (gameStarted is True):
             enemies.append( enemy.enemy(game) )
@@ -143,14 +165,12 @@ if __name__ == "__main__":
                     player.shoot(game.screen_x/2, game.screen_y/2)
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_ESCAPE:
-                    print("pred: ", last_enemy_ctime)
-                    pause_game(last_enemy_ctime, pause)
-                    print("po: ", last_enemy_ctime)
+                    pause_game(game, last_enemy_ctime, pause)
                 if event.key == pygame.K_LEFT:
                     left = False
                 if event.key == pygame.K_RIGHT:
                     right = False
-                if event.key == pygame.K_F10:
+                if event.key == pygame.K_SEMICOLON:
                     if show_dev:
                         show_dev = False
                     else:
